@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EasySpoofer Admin - Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header Superior */
+    header {
+      background-color: #ffffff;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 25px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #007bff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 14px;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #007bff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .btn-logout {
+      background-color: transparent;
+      border: 1px solid #dc3545;
+      color: #dc3545;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn-logout:hover {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    /* Container Principal */
+    .app-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* Sidebar de Navegação */
+    aside {
+      width: 240px;
+      background-color: #ffffff;
+      border-right: 1px solid #e9ecef;
+      padding: 20px 0;
+    }
+
+    .nav-list {
+      list-style: none;
+    }
+
+    .nav-item {
+      padding: 12px 25px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #555;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background-color: #f8f9fa;
+      color: #007bff;
+    }
+
+    .nav-item.active {
+      background-color: #e7f1ff;
+      color: #007bff;
+      border-left: 4px solid #007bff;
+    }
+
+    /* Conteúdo das Abas */
+    main {
+      flex: 1;
+      padding: 30px;
+      max-width: 1200px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 22px;
+    }
+
+    /* Cards */
+    .card {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 25px;
+    }
+
+    /* Grids para Estatísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #007bff;
+    }
+
+    .stat-card.info { border-left-color: #17a2b8; }
+    .stat-card.success { border-left-color: #28a745; }
+    .stat-card.warning { border-left-color: #ffc107; }
+
+    .stat-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Formulários e Inputs */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: #007bff;
+    }
+
+    .key-input-wrapper {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Botões */
+    button {
+      padding: 10px 18px;
+      background-color: #007bff;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #a0c4ff;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #bd2130;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    /* Tabelas */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      color: #495057;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-active { background-color: #d4edda; color: #155724; }
+    .badge-expired { background-color: #f8d7da; color: #721c24; }
+    .badge-suspended { background-color: #fff3cd; color: #856404; }
+
+    /* Barra de Busca e Filtros */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+
+    .search-box {
+      max-width: 320px;
+      width: 100%;
+    }
+
+    /* Notificação Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 1000;
+      font-size: 14px;
+    }
+
+    .toast.error {
+      background-color: #dc3545;
+    }
+
+    /* Overlay de Carregamento da Sessão */
+    #loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-size: 16px;
+      color: #007bff;
+    }
+
+    @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+        padding: 10px 0;
+      }
+      .nav-list {
+        display: flex;
+        justify-content: space-around;
+      }
+      .nav-item {
+        padding: 10px;
+        border-left: none !important;
+      }
+      .nav-item.active {
+        border-bottom: 3px solid #007bff;
+      }
+      main {
+        padding: 15px;
+      }
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-box {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Overlay de Carregamento da Sessão -->
+  <div id="loading-overlay">
+    <div>Verificando sessão...</div>
+  </div>
+
+  <!-- Header Superior -->
+  <header>
+    <div class="brand-title">
+      EasySpoofer <span style="font-size: 12px; color: #666; font-weight: normal;">Admin</span>
+    </div>
+    <div class="user-profile">
+      <div class="user-avatar" id="avatarIcon">A</div>
+      <span id="accountName">Administrador</span>
+      <button class="btn-logout" onclick="handleLogout()">Sair</button>
+    </div>
+  </header>
+
+  <!-- Application Container -->
+  <div class="app-container">
+
+    <!-- Navigation Sidebar -->
+    <aside>
+      <ul class="nav-list">
+        <li class="nav-item active" onclick="switchTab('dashboard')">
+          <span>Visão Geral</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('create-license')">
+          <span>Criar Licença</span>
+        </li>
+        <li class="nav-item" onclick="switchTab('view-licenses')">
+          <span>Visualizar Licenças</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+
+      <!-- TAB: Visão Geral -->
+      <div id="dashboard" class="tab-content active">
+        <h2>Visão Geral</h2>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Total de Licenças</div>
+            <div class="stat-value" id="stat-total">0</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-title">Licenças Ativas</div>
+            <div class="stat-value" id="stat-active">0</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-title">Mensais</div>
+            <div class="stat-value" id="stat-mensal">0</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-title">Vitalícias</div>
+            <div class="stat-value" id="stat-vitalicia">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Total de Usos</div>
+            <div class="stat-value" id="stat-uses">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom: 15px; font-size: 16px; color: #495057;">Últimas Licenças Criadas</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Usuário ou ID do Discord</th>
+                  <th>Chave UUID v4</th>
+                  <th>Plano</th>
+                  <th>Usos</th>
+                  <th>Status</th>
+                  <th>Expiração</th>
+                </tr>
+              </thead>
+              <tbody id="recent-licenses-tbody">
+                <tr><td colspan="6" style="text-align: center; color: #888;">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Criar Licença -->
+      <div id="create-license" class="tab-content">
+        <h2>Criar Nova Licença</h2>
+
+        <div class="card" style="max-width: 600px;">
+          <form id="licenseForm" onsubmit="handleCreateLicense(event)">
+            <div class="form-group">
+              <label for="clientName">Usuário ou ID do Discord</label>
+              <input type="text" id="clientName" required placeholder="Ex: usuario_discord ou 123456789012345678">
+            </div>
+
+            <div class="form-group">
+              <label for="planType">Tipo de Plano</label>
+              <select id="planType" required>
+                <option value="Mensal" selected>Mensal (30 Dias)</option>
+                <option value="Vitalício">Vitalício (Permanente)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="licenseKey">Chave de Licença (UUID v4)</label>
+              <div class="key-input-wrapper">
+                <input type="text" id="licenseKey" required placeholder="00000000-0000-0000-0000-000000000000">
+                <button type="button" class="btn-secondary" onclick="generateUUIDKey()">Gerar UUID</button>
+              </div>
+            </div>
+
+            <button type="submit" id="btnSubmitLicense" style="margin-top: 15px;">Gerar e Salvar Licença</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB: Visualizar Licenças -->
+      <div id="view-licenses" class="tab-content">
+        <h2>Licenças Cadastradas</h2>
+
+        <div class="card">
+          <div class="filter-bar">
+            <div class="search-box">
+              <input type="text" id="searchInput" oninput="filterLicenses()" placeholder="Buscar por Discord ou UUID...">
+            </div>
+            <div>
+              <select id="statusFilter" onchange="filterLicenses()" style="width: auto;">
+                <option value="ALL">Todos os Status</option>
+                <option value="Ativa">Ativas</option>
+                <option value="Expirada">Expiradas</option>
+                <option value="Suspensa">Suspensas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Usuário ou ID do Discord</th>
+                  <th>Chave UUID v4</th>
+                  <th>Plano</th>
+                  <th>Usos</th>
+                  <th>Expiração</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="all-licenses-tbody">
+                <tr><td colspan="8" style="text-align: center; color: #888;">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toast" class="toast">Ação realizada com sucesso!</div>
+
+  <script>
+    let licenses = [];
+
+    function generateUUID() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    window.onload = async function () {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        window.location.href = "/";
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/verify_token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Token inválido ou expirado");
+        }
+
+        const data = await response.json();
+
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+
+        document.getElementById('loading-overlay').style.display = 'none';
+
+        generateUUIDKey();
+        await fetchLicenses();
+
+      } catch (err) {
+        console.error('Erro de autenticação:', err);
+        localStorage.removeItem("token");
+        window.location.href = "/";
+      }
+    };
+
+    async function fetchLicenses() {
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await fetch('/api/license', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem("token");
+          window.location.href = "/";
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("Erro ao buscar licenças do servidor.");
+        }
+
+        const responseData = await response.json();
+
+        if (Array.isArray(responseData)) {
+          licenses = responseData;
+        } else if (responseData && Array.isArray(responseData.licenses)) {
+          licenses = responseData.licenses;
+        } else if (responseData && Array.isArray(responseData.data)) {
+          licenses = responseData.data;
+        } else if (responseData && Array.isArray(responseData.items)) {
+          licenses = responseData.items;
+        } else if (responseData && typeof responseData === 'object') {
+          const possibleArray = Object.values(responseData).find(val => Array.isArray(val));
+          licenses = possibleArray || [];
+        } else {
+          licenses = [];
+        }
+
+        renderDashboard();
+        renderLicensesTable();
+
+      } catch (err) {
+        console.error('Erro ao buscar dados:', err);
+        licenses = [];
+        renderDashboard();
+        renderLicensesTable();
+        showToast(err.message || "Erro ao carregar lista de licenças", true);
+      }
+    }
+
+    async function handleCreateLicense(e) {
+      e.preventDefault();
+
+      const btnSubmit = document.getElementById('btnSubmitLicense');
+      const client = document.getElementById('clientName').value.trim();
+      const plan = document.getElementById('planType').value;
+      const key = document.getElementById('licenseKey').value.trim();
+      const token = localStorage.getItem("token");
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "Criando...";
+
+      try {
+        const response = await fetch('/api/license', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            client: client,
+            plan: plan,
+            license: key
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || "Erro ao criar licença.");
+        }
+
+        showToast("Licença gerada com sucesso!");
+
+        document.getElementById('clientName').value = '';
+        generateUUIDKey();
+
+        await fetchLicenses();
+        switchTab('view-licenses');
+
+      } catch (err) {
+        console.error('Erro de criação:', err);
+        showToast(err.message || "Erro ao criar licença", true);
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Gerar e Salvar Licença";
+      }
+    }
+
+    async function deleteLicense(key) {
+      if (!confirm(`Tem certeza que deseja revogar a licença: ${key}?`)) {
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+      try {
+        const response = await fetch('/api/license', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ license: key })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || "Erro ao revogar licença.");
+        }
+
+        showToast("Licença revogada com sucesso!");
+        await fetchLicenses();
+
+      } catch (err) {
+        console.error('Erro ao revogar:', err);
+        showToast(err.message || "Falha ao revogar licença", true);
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+
+      const indexMap = { 'dashboard': 0, 'create-license': 1, 'view-licenses': 2 };
+      document.querySelectorAll('.nav-item')[indexMap[tabId]].classList.add('active');
+    }
+
+    function generateUUIDKey() {
+      document.getElementById('licenseKey').value = generateUUID();
+    }
+
+    function renderDashboard() {
+      const activeCount = licenses.filter(l => String((l.on || '')).toLowerCase() === 'ativa').length;
+      const mensalCount = licenses.filter(l => l.plan === 'Mensal' || l.type === 'Mensal').length;
+      const vitaliciaCount = licenses.filter(l => l.plan === 'Vitalício' || l.type === 'Vitalício').length;
+      const totalUses = licenses.reduce((acc, curr) => acc + (curr.uses || 0), 0);
+
+      document.getElementById('stat-total').innerText = licenses.length;
+      document.getElementById('stat-active').innerText = activeCount;
+      document.getElementById('stat-mensal').innerText = mensalCount;
+      document.getElementById('stat-vitalicia').innerText = vitaliciaCount;
+      document.getElementById('stat-uses').innerText = totalUses;
+
+      const recentTbody = document.getElementById('recent-licenses-tbody');
+      recentTbody.innerHTML = '';
+
+      if (!licenses || licenses.length === 0) {
+        recentTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888;">Nenhuma licença encontrada.</td></tr>`;
+        return;
+      }
+
+      licenses.slice(0, 5).forEach(item => {
+        const clientName = item.client || 'N/A';
+        const planName = item.plan || 'N/A';
+        const itemUses = item.uses ?? 0;
+        const status = item.on || 'N/A';
+        const expires = item.time_expire || 'N/A';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${escapeHtml(clientName)}</b></td>
+          <td><code style="font-size: 12px;">${escapeHtml(item.license || '')}</code></td>
+          <td>${escapeHtml(planName)}</td>
+          <td><b>${itemUses}</b> ${itemUses === 1 ? 'uso' : 'usos'}</td>
+          <td><span class="badge ${getBadgeClass(status)}">${escapeHtml(status)}</span></td>
+          <td>${escapeHtml(expires)}</td>
+        `;
+        recentTbody.appendChild(tr);
+      });
+    }
+
+    function renderLicensesTable(data = licenses) {
+      const tbody = document.getElementById('all-licenses-tbody');
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #888;">Nenhuma licença encontrada.</td></tr>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const clientName = item.client || 'N/A';
+        const planName = item.plan || 'N/A';
+        const itemUses = item.uses ?? 0;
+        const expires = item.time_expire || 'N/A';
+        const status = String(item.on) || 'N/A';
+
+        console.log(item.on);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${escapeHtml(clientName)}</b></td>
+          <td><code style="font-size: 12px;">${escapeHtml(item.license || '')}</code></td>
+          <td>${escapeHtml(planName)}</td>
+          <td><b>${itemUses}</b> ${itemUses === 1 ? 'uso' : 'usos'}</td>
+          <td>${escapeHtml(expires)}</td>
+          <td><span class="badge ${getBadgeClass(status)}">${escapeHtml(status)}</span></td>
+          <td>
+            <button class="btn-sm btn-secondary" onclick="copyKey('${escapeHtml(item.license || '')}')">Copiar</button>
+            <button class="btn-sm btn-danger" onclick="deleteLicense('${escapeHtml(item.license || '')}')">Revogar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterLicenses() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+
+      const filtered = licenses.filter(item => {
+        const clientName = (item.discord || item.client || '').toLowerCase();
+        const key = (item.key || '').toLowerCase();
+        const currentStatus = (item.status || 'Ativa');
+
+        const matchesQuery = clientName.includes(query) || key.includes(query);
+        const matchesStatus = status === 'ALL' || currentStatus.toLowerCase() === status.toLowerCase();
+
+        return matchesQuery && matchesStatus;
+      });
+
+      renderLicensesTable(filtered);
+    }
+
+    function copyKey(keyText) {
+      const tempInput = document.createElement('input');
+      tempInput.value = keyText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      showToast("UUID copiado com sucesso!");
+    }
+
+    function getBadgeClass(status) {
+      const s = String(status || '').toLowerCase();
+      if (s === 'ativa') return 'badge-active';
+      if (s === 'expirada') return 'badge-expired';
+      return 'badge-suspended';
+    }
+
+    function handleLogout() {
+      localStorage.removeItem("token");
+      showToast("Saindo do sistema...");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 500);
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      if (isError) {
+        toast.classList.add('error');
+      } else {
+        toast.classList.remove('error');
+      }
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+
+</html>

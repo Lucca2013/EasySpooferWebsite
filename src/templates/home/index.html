@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .home-container {
+      text-align: center;
+    }
+
+    .home-container p {
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #bd2130;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="login-page" class="card">
+    <h1>EasySpoofer</h1>
+    <h2>Entrar</h2>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username">Usuário</label>
+        <input type="text" id="username" name="username" required placeholder="Digite seu usuário">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" required placeholder="Digite sua senha">
+      </div>
+
+      <button type="submit">Acessar</button>
+    </form>
+  </div>
+
+  <script>
+    if (localStorage.getItem("token")) {
+      window.location.href = "/dash";
+    }
+
+
+    function handleLogin(event) {
+      event.preventDefault();
+
+      const form = document.getElementById("loginForm");
+      const formData = Object.fromEntries(new FormData(form));
+
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user: formData.username,
+          password: formData.password
+        })
+      })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            localStorage.setItem("token", data.token);
+            window.location.href = "/dash";
+          }
+        })
+        .catch(error => console.error('Erro de Rede/Servidor:', error));
+
+    }
+  </script>
+
+</body>
+
+</html>
