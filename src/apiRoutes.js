@@ -27,6 +27,7 @@ router.post("/login", async (req, res) => {
 
         return res.status(200).json({ token: sign_token(user_db.rows[0].id) });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
     }
 });
@@ -59,6 +60,7 @@ router.get("/license", async (req, res) => {
 
         return res.status(200).json({ licenses: licenses.rows });
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
     }
 });
@@ -101,6 +103,7 @@ router.post("/license", async (req, res) => {
 
         return res.status(200);
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
     }
 });
@@ -132,6 +135,7 @@ router.delete("/license", async (req, res) => {
 
         return res.status(200);
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
     }
 });
