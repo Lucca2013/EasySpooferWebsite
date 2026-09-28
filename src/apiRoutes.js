@@ -101,7 +101,7 @@ router.post("/license", async (req, res) => {
             [client, plan, license, time_expire]
         );
 
-        return res.status(200);
+        return res.status(200).json({ success: true });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
@@ -133,7 +133,7 @@ router.delete("/license", async (req, res) => {
             [license]
         );
 
-        return res.status(200);
+        return res.status(200).json({ success: true });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
