@@ -124,7 +124,7 @@ router.delete("/license", async (req, res) => {
     const { license } = req.body;
 
     try {
-        await db.query(
+        const licenses = await db.query(
             `
                 UPDATE licenses
                 SET "on" = False
@@ -137,6 +137,98 @@ router.delete("/license", async (req, res) => {
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
+    }
+});
+
+router.post("/verify_license", async (req, res) => {
+    if (!req.body?.license) {
+        return res.status(400).json({ error: "LICENSE_MISSING" });
+    }
+
+    const { license } = req.body;
+
+    try {
+        const licenses = await db.query(
+            `
+                SELECT *
+                FROM licenses
+                WHERE license = $1
+                LIMIT 1
+            `,
+            [license]
+        );
+
+        if (licenses.rows.length === 0) {
+            return res.status(400).json({ valid: false, error: "License not found" });
+        } else if (licenses.rows[0].on === false) {
+            return res.status(400).json({ valid: false, error: "License not on" });
+        } else if (verify_time_expiration(licenses.rows[0].time_expire)) {
+            return res.status(400).json({ valid: false, error: "License time expired, buy a new one" });
+        }
+
+        return res.status(200).json({ valid: true, token: sign_token(license, "5m") });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
+    }
+});
+
+router.post("/verify_license", async (req, res) => {
+    if (!req.body?.license) {
+        return res.status(400).json({ error: "LICENSE_MISSING" });
+    }
+
+    const { license } = req.body;
+
+    try {
+        const licenses = await db.query(
+            `
+                SELECT *
+                FROM licenses
+                WHERE license = $1
+                LIMIT 1
+            `,
+            [license]
+        );
+
+        if (licenses.rows.length === 0) {
+            return res.status(400).json({ valid: false, error: "License not found" });
+        } else if (licenses.rows[0].on === false) {
+            return res.status(400).json({ valid: false, error: "License not on" });
+        } else if (verify_time_expiration(licenses.rows[0].time_expire)) {
+            return res.status(400).json({ valid: false, error: "License time expired, buy a new one" });
+        }
+
+        return res.status(200).json({ valid: true, token: sign_token(license, "5m") });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
+    }
+});
+
+router.post("/verify_license_token", async (req, res) => {
+    const token = get_token(req, res);
+
+    const result = verify_token(token);
+
+    if (result.status === "ok") {
+        const licenses = await db.query(
+            `
+                SELECT *
+                FROM licenses
+                WHERE license = $1
+                LIMIT 1
+            `,
+            [result.id]
+        );
+
+        if (licenses.rows.length === 0) {
+            return res.status(400).json({ valid: false, error: "License not found" });
+        }
+
+        res.status(200).json({ valid: true });
+    } else {
+        res.status(400).json({ valid: false, error: result.err });
     }
 });
 
@@ -154,6 +246,18 @@ function get_token(req, res) {
     }
 
     return parts[1];
+}
+
+function verify_time_expiration(time_expire) {
+    const time = new Date(time_expire);
+
+    const now = new Date();
+
+    if (now > time) {
+        return true
+    } else {
+        return false
+    }
 }
 
 export default router;

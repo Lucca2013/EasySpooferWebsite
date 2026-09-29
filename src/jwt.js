@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import 'dotenv/config';
 
-export function sign_token(id) {
+export function sign_token(id, expiration = '72h') {
     const token = jwt.sign(
         { id: id },
         process.env.SECRET_KEY,
-        { expiresIn: '72h' }
+        { expiresIn: expiration }
     );
 
     return token;

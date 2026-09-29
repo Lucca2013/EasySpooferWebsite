@@ -859,9 +859,9 @@
       const status = document.getElementById('statusFilter').value;
 
       const filtered = licenses.filter(item => {
-        const clientName = (item.discord || item.client || '').toLowerCase();
+        const clientName = (item.client || '').toLowerCase();
         const key = (item.key || '').toLowerCase();
-        const currentStatus = (item.status || 'Ativa');
+        const currentStatus = (String(item.on) || 'Ativa');
 
         const matchesQuery = clientName.includes(query) || key.includes(query);
         const matchesStatus = status === 'ALL' || currentStatus.toLowerCase() === status.toLowerCase();
