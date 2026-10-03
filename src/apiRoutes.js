@@ -235,7 +235,7 @@ router.post("/verify_license_token", async (req, res) => {
                 WHERE license = $1
                 LIMIT 1
             `,
-            [result.id]
+            [result.token.id]
         );
 
         if (licenses.rows.length === 0) {

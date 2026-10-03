@@ -14,7 +14,7 @@ export function sign_token(id, expiration = '72h') {
 export function verify_token(token) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        return {status: "ok", id: decoded};
+        return {status: "ok", token: decoded};
     } catch (err) {
         return {status: "error", err: err.message};
     }
