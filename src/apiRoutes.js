@@ -45,7 +45,11 @@ router.post("/verify_token", async (req, res) => {
 });
 
 router.get("/license", async (req, res) => {
-    const token = get_token(req, res);
+    const token = get_token(req);
+
+    if (!token) {
+        return res.status(401).json({ valid: false, error: "TOKEN_MISSING_OR_INVALID_FORMAT" });
+    }
 
     const result = verify_token(token);
 
@@ -66,7 +70,11 @@ router.get("/license", async (req, res) => {
 });
 
 router.post("/license", async (req, res) => {
-    const token = get_token(req, res);
+    const token = get_token(req);
+
+    if (!token) {
+        return res.status(401).json({ valid: false, error: "TOKEN_MISSING_OR_INVALID_FORMAT" });
+    }
 
     const result = verify_token(token);
 
@@ -109,7 +117,11 @@ router.post("/license", async (req, res) => {
 });
 
 router.delete("/license", async (req, res) => {
-    const token = get_token(req, res);
+    const token = get_token(req);
+
+    if (!token) {
+        return res.status(401).json({ valid: false, error: "TOKEN_MISSING_OR_INVALID_FORMAT" });
+    }
 
     const result = verify_token(token);
 
@@ -207,7 +219,11 @@ router.post("/verify_license", async (req, res) => {
 });
 
 router.post("/verify_license_token", async (req, res) => {
-    const token = get_token(req, res);
+    const token = get_token(req);
+
+    if (!token) {
+        return res.status(401).json({ valid: false, error: "TOKEN_MISSING_OR_INVALID_FORMAT" });
+    }
 
     const result = verify_token(token);
 
@@ -232,17 +248,17 @@ router.post("/verify_license_token", async (req, res) => {
     }
 });
 
-function get_token(req, res) {
+function get_token(req) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        return res.status(401).json({ error: 'TOKEN_MISSING' });
+        return null;
     }
 
     const parts = authHeader.split(' ');
 
     if (parts.length !== 2 || parts[0] !== 'Bearer') {
-        return res.status(401).json({ error: 'WRONG_TOKEN' });
+        return null;
     }
 
     return parts[1];
